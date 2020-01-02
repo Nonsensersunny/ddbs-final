@@ -1,0 +1,35 @@
+http:
+  host: localhost
+  port: 8080
+  allow-origin:
+    - http://127.0.0.1:8080
+
+mysqls:
+  - area: Beijing
+    mysql-config:
+      host: bj-mysql
+      port: 3306
+      dbname: ddbs
+      username: root
+      password: zyven
+  - area: Wuhan
+    mysql-config:
+      host: wh-mysql
+      port: 3306
+      dbname: ddbs
+      username: root
+      password: zyven
+  - area: Shanghai
+    mysql-config:
+      host: sh-mysql
+      port: 3306
+      dbname: ddbs
+      username: root
+      password: zyven
+
+redis:
+  host: redis
+  port: 6379
+  username:
+  password:
+  dbname: 0
