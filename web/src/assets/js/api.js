@@ -65,7 +65,13 @@ export const AdminHttp = {
         return res.data;
     },
     async updateTraceNext(id, next) {
-        let res = await this.client.post(`admin/trace/?id=${id}&&next=${next}`);
+        let formData = new FormData();
+        formData.append("id", id);
+        formData.append("next", next);
+        let res = await this.client.post(`admin/trace`, {
+            id: id,
+            next: next,
+        });
         return res.data;
     }
 }

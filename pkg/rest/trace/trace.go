@@ -59,16 +59,35 @@ func UpdateTrace(c *gin.Context) {
 		return
 	}
 
-	tid := c.Query("id")
-	next := c.Query("next")
-	trace, err := model.GetTraceById(mysql.GetMySQLDB(dbConf), tid)
+	//tid := c.Query("id")
+	//next := c.Query("next")
+	t := model.Trace{}
+	if err := c.ShouldBindJSON(&t); err != nil {
+		c.JSON(http.StatusOK, utils.ErrorHelper(err, utils.PARSE_PARAMETER_ERROR))
+		return
+	}
+	trace, err := model.GetTraceById(mysql.GetMySQLDB(dbConf), t.Id)
 	if err != nil {
 		c.JSON(http.StatusOK, utils.ErrorHelper(err, utils.UPDATE_TRACE_FAIL))
 		return
 	}
-	if err := trace.UpdateNext(mysql.GetMySQLDB(dbConf), next); err != nil {
+	if err := trace.UpdateNext(mysql.GetMySQLDB(dbConf), t.Next); err != nil {
 		c.JSON(http.StatusOK, utils.ErrorHelper(err, utils.UPDATE_TRACE_FAIL))
 		return
 	}
+
+	nextTrace := &model.Trace{
+		Oid:     trace.Oid,
+		Current: t.Next,
+	}
+	nextDBConf, err := config.GetMySQLConfigByArea(t.Next)
+	if err != nil {
+		c.JSON(http.StatusOK, utils.ErrorHelper(err, utils.INVALID_AREA))
+	}
+	if err := nextTrace.CreateTrace(mysql.GetMySQLDB(nextDBConf)); err != nil {
+		c.JSON(http.StatusOK, utils.ErrorHelper(err, utils.UPDATE_TRACE_FAIL))
+		return
+	}
+
 	c.JSON(http.StatusOK, utils.RespHelper(utils.SuccessResp()))
 }

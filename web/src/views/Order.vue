@@ -59,10 +59,10 @@
                 :visible.sync="orderDetailDialogVisible">
             <p>订单ID：{{ currentOrder.id }}</p>
             <p>创建时间：{{ currentOrder.time | timeFilter }}</p>
-            <el-steps :active="1" finish-status="success">
+            <el-steps :active="traces.length + 1" finish-status="success">
                 <el-step :title="currentOrder.start" description="始发地"></el-step>
                 <el-step v-for="trace in traces" :key="trace.id" :title="trace.current"></el-step>
-                <el-step title="..."></el-step>
+                <el-step title="..." v-if="hasNextDest"></el-step>
                 <el-step :title="currentOrder.dest" description="目的地"></el-step>
             </el-steps>
             <div v-if="role === '2'">
@@ -112,7 +112,8 @@
                 traces: [],
                 role: this.$store.getters.role,
                 area: this.$store.getters.area,
-                newTrace: new Trace()
+                newTrace: new Trace(),
+                hasNextDest: true,
             }
         },
         methods: {
@@ -168,6 +169,7 @@
             },
             async getOrderById(id) {
                 try {
+                    await this.getTraceByOrderId(id);
                     let resp = await this.$store.dispatch("getOrderById", id);
                     await this.getTraceByOrderId(id);
                     if (resp.code !== 0) {
@@ -199,7 +201,7 @@
                     let that = this;
                     let startTrace = this.traces.filter(t => {
                         return t.current === that.area;
-                    });
+                    })[0];
                     let id = startTrace.id;
                     let next = that.newTrace.next;
                     let updateResp = await this.$store.dispatch("updateTraceNext", {id, next});
@@ -211,16 +213,16 @@
                         this.orderDetailDialogVisible = false;
                     }
 
-                    this.newTrace.oid = this.currentOrder.id;
-                    this.newTrace.current = this.area;
-                    let resp = await this.$store.dispatch("createTrace", this.newTrace);
-                    if (resp.code !== 0) {
-                        this.$message.error(Error[resp.code]);
-                        this.orderDetailDialogVisible = false;
-                    } else {
-                        this.$message.success("物流信息更新成功");
-                        this.orderDetailDialogVisible = false;
-                    }
+                    // this.newTrace.oid = this.currentOrder.id;
+                    // this.newTrace.current = this.area;
+                    // let resp = await this.$store.dispatch("createTrace", this.newTrace);
+                    // if (resp.code !== 0) {
+                    //     this.$message.error(Error[resp.code]);
+                    //     this.orderDetailDialogVisible = false;
+                    // } else {
+                    //     this.$message.success("物流信息更新成功");
+                    //     this.orderDetailDialogVisible = false;
+                    // }
                 } catch (e) {
                     console.log(e);
                 }

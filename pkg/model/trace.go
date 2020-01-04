@@ -17,13 +17,17 @@ func (t *Trace) CreateTrace(db *gorm.DB) error {
 	return db.Table("traces").Create(&t).Error
 }
 
-func GetTraceById(db *gorm.DB, id string) (trace *Trace, err error) {
+func GetTraceById(db *gorm.DB, id string) (trace Trace, err error) {
 	err = db.Table("traces").Where("id = ?", id).Scan(&trace).Error
 	return
 }
 
 func (t *Trace) UpdateNext(db *gorm.DB, next string) error {
 	return db.Table("traces").Where("id = ?", t.Id).Update("next", next).Error
+}
+
+func (t *Trace) UpdateCurrent(db *gorm.DB, current string) error {
+	return db.Table("traces").Where("id = ?", t.Id).Update("current", current).Error
 }
 
 func GetByOid(db *gorm.DB, oid string) (*Trace, error) {

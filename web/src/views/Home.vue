@@ -1,22 +1,24 @@
 <template>
   <div class="home">
-    <el-form :model="user">
-      <el-form-item label="Phone" required><el-input v-model="user.phone"></el-input></el-form-item>
-      <el-form-item label="Area" required>
-        <el-select v-model="user.area" placeholder="请选择地区">
-          <el-option
-            v-for="area in this.$store.getters.areas"
-            :key="area"
-            :label="area"
-            :value="area"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="Password" required><el-input v-model="user.password"></el-input></el-form-item>
-    </el-form>
-    <div>
-      <el-button @click="signup">Signup</el-button>
-      <el-button @click="signin">Signin</el-button>
-    </div>
+    <el-card style="width: 50%; margin: 0 auto">
+      <el-form :model="user">
+        <el-form-item label="电话" required><el-input v-model="user.phone"></el-input></el-form-item>
+        <el-form-item label="地区" required>
+          <el-select v-model="user.area" placeholder="请选择地区">
+            <el-option
+                    v-for="area in this.$store.getters.areas"
+                    :key="area"
+                    :label="area"
+                    :value="area"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="密码" required><el-input type="password" v-model="user.password"></el-input></el-form-item>
+      </el-form>
+      <div>
+        <el-button @click="signup">注册</el-button>
+        <el-button @click="signin">登录</el-button>
+      </div>
+    </el-card>
   </div>
 </template>
 
